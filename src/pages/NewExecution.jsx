@@ -52,7 +52,7 @@ export function NewExecution() {
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [splitRatio, setSplitRatio] = useState(50) // 50% each side
+  const [splitRatio, setSplitRatio] = useState(45)
   const [isDragging, setIsDragging] = useState(false)
   const containerRef = useRef(null)
   const navigate = useNavigate()
@@ -101,7 +101,6 @@ export function NewExecution() {
     setProgram('')
   }
 
-  // AI 插入代码到光标位置
   const handleAIInsert = (code) => {
     const textarea = document.querySelector('textarea')
     if (textarea) {
@@ -121,17 +120,14 @@ export function NewExecution() {
     }
   }
 
-  // AI 替换全部代码
   const handleAIReplace = (code) => {
     setProgram(code)
   }
 
-  // AI 追加代码
   const handleAIAppend = (code) => {
     setProgram(program + (program && !program.endsWith('\n') ? '\n' : '') + code)
   }
 
-  // Handle divider drag
   const handleMouseDown = useCallback((e) => {
     e.preventDefault()
     setIsDragging(true)
@@ -142,7 +138,7 @@ export function NewExecution() {
     
     const rect = containerRef.current.getBoundingClientRect()
     const x = e.clientX - rect.left
-    const ratio = Math.max(20, Math.min(80, (x / rect.width) * 100))
+    const ratio = Math.max(25, Math.min(70, (x / rect.width) * 100))
     setSplitRatio(ratio)
   }, [isDragging])
 
@@ -162,107 +158,127 @@ export function NewExecution() {
   }, [isDragging, handleMouseMove, handleMouseUp])
 
   return (
-    <div 
-      ref={containerRef}
-      className="flex h-[calc(100vh-180px)] bg-white rounded-lg shadow overflow-hidden"
-      style={{ cursor: isDragging ? 'col-resize' : 'default' }}
-    >
-      {/* Left: AI Assistant */}
-      <div 
-        className="flex-shrink-0 border-r border-gray-200"
-        style={{ width: `${splitRatio}%` }}
-      >
-        <AIAssistant
-          onInsert={handleAIInsert}
-          onReplace={handleAIReplace}
-          onAppend={handleAIAppend}
-          currentCode={program}
-        />
-      </div>
-
-      {/* Divider */}
-      <div
-        className={`w-1.5 flex-shrink-0 bg-gray-200 hover:bg-violet-300 cursor-col-resize transition-colors relative group ${
-          isDragging ? 'bg-violet-400' : ''
-        }`}
-        onMouseDown={handleMouseDown}
-      >
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-8 bg-gray-300 group-hover:bg-violet-400 rounded flex items-center justify-center">
-          <div className="flex flex-col gap-1">
-            <div className="w-1 h-1 bg-gray-500 rounded-full" />
-            <div className="w-1 h-1 bg-gray-500 rounded-full" />
-            <div className="w-1 h-1 bg-gray-500 rounded-full" />
-          </div>
+    <div className="h-[calc(100vh-180px)]">
+      {/* Header */}
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">新建执行</h1>
+          <p className="text-gray-500 text-sm">使用 OpenProse 语法创建工作流</p>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={loadExample}
+            className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+          >
+            加载示例
+          </button>
+          <button
+            onClick={handleCreate}
+            disabled={loading || !program.trim()}
+            className="px-6 py-2 text-sm bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-medium rounded-lg hover:opacity-90 disabled:opacity-50 transition shadow-lg shadow-violet-500/25"
+          >
+            {loading ? '创建中...' : '▶ 创建执行'}
+          </button>
         </div>
       </div>
 
-      {/* Right: Editor */}
+      {/* Main Content: Split View */}
       <div 
-        className="flex-1 flex flex-col min-w-0"
-        style={{ width: `${100 - splitRatio}%` }}
+        ref={containerRef}
+        className="flex h-[calc(100%-80px)] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
+        style={{ cursor: isDragging ? 'col-resize' : 'default' }}
       >
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">新建执行</h1>
-            <p className="text-gray-500 text-sm">使用 OpenProse 语法创建工作流</p>
+        {/* Left: AI Panel */}
+        <div 
+          className="flex flex-col h-full bg-gradient-to-b from-slate-900 to-slate-800"
+          style={{ width: `${splitRatio}%` }}
+        >
+          {/* AI Header */}
+          <div className="px-5 py-4 border-b border-slate-700/50 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg">
+              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <div>
+              <div className="text-white font-semibold">AI 工作流助手</div>
+              <div className="text-slate-400 text-xs">描述需求，自动生成 .prose 代码</div>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={loadExample}
-              className="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
-            >
-              加载示例
-            </button>
+          
+          {/* AI Assistant */}
+          <div className="flex-1 min-h-0">
+            <AIAssistant
+              onInsert={handleAIInsert}
+              onReplace={handleAIReplace}
+              onAppend={handleAIAppend}
+              currentCode={program}
+            />
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div
+          className={`group relative w-1 flex-shrink-0 transition-colors ${
+            isDragging ? 'bg-violet-400' : 'bg-gray-200 hover:bg-violet-300'
+          }`}
+          onMouseDown={handleMouseDown}
+        >
+          {/* Drag Handle */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-12 bg-white rounded-lg shadow-md border border-gray-200 flex items-center justify-center transition-all group-hover:shadow-lg group-hover:border-violet-300">
+            <div className="flex flex-col gap-1">
+              <div className="w-1 h-1 bg-gray-400 rounded-full group-hover:bg-violet-500 transition-colors" />
+              <div className="w-1 h-1 bg-gray-400 rounded-full group-hover:bg-violet-500 transition-colors" />
+              <div className="w-1 h-1 bg-gray-400 rounded-full group-hover:bg-violet-500 transition-colors" />
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Editor Panel */}
+        <div 
+          className="flex flex-col min-w-0 bg-white"
+          style={{ width: `${100 - splitRatio}%` }}
+        >
+          {/* Editor Header */}
+          <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-red-400" />
+                <div className="w-3 h-3 rounded-full bg-yellow-400" />
+                <div className="w-3 h-3 rounded-full bg-green-400" />
+              </div>
+              <span className="text-gray-500 text-sm font-medium">workflow.prose</span>
+            </div>
             <button
               onClick={clearEditor}
-              className="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+              className="px-3 py-1.5 text-xs text-gray-400 hover:text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-md transition"
             >
               清空
             </button>
           </div>
-        </div>
 
-        {/* Editor */}
-        <div className="flex-1 min-h-0 p-4">
-          <WorkflowEditor
-            value={program}
-            onChange={setProgram}
-            placeholder="输入 .prose 工作流代码，或让 AI 帮你生成..."
-          />
-        </div>
-
-        {/* Actions */}
-        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between flex-shrink-0">
-          <div className="flex-1 mr-4">
-            {error && (
-              <div className="text-sm text-red-600">{error}</div>
-            )}
-            <div className="text-xs text-gray-400 mt-1">
-              支持 OpenProse 完整语法：session, agent, parallel, repeat, loop, if/else, try/catch, choice 等
+          {/* Editor Content */}
+          <div className="flex-1 min-h-0 p-4">
+            <div className="h-full rounded-xl overflow-hidden ring-1 ring-gray-200">
+              <WorkflowEditor
+                value={program}
+                onChange={setProgram}
+                placeholder="输入 .prose 工作流代码，或让 AI 帮你生成..."
+              />
             </div>
           </div>
-          <button
-            onClick={handleCreate}
-            disabled={loading || !program.trim()}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
-          >
-            {loading ? (
-              <>
-                <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                创建中...
-              </>
-            ) : (
-              <>
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                创建执行
-              </>
-            )}
-          </button>
         </div>
       </div>
+
+      {/* Error Toast */}
+      {error && (
+        <div className="fixed bottom-6 right-6 px-6 py-4 bg-red-500 text-white rounded-xl shadow-lg flex items-center gap-3">
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          {error}
+        </div>
+      )}
     </div>
   )
 }

@@ -180,21 +180,6 @@ export function AIAssistant({ onInsert, onReplace, currentCode }) {
 
   return (
     <div className="flex flex-col h-full bg-slate-900">
-      {/* Header */}
-      <div className="px-4 py-3 border-b border-slate-700 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
-            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          <div>
-            <div className="text-sm font-medium text-white">AI 助手</div>
-            <div className="text-xs text-slate-400">生成 .prose 工作流</div>
-          </div>
-        </div>
-      </div>
-
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((msg, i) => (
