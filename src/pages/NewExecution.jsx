@@ -163,51 +163,54 @@ export function NewExecution() {
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 mb-1">新建执行</h1>
-          <p className="text-gray-500 text-sm">使用 OpenProse 语法创建工作流</p>
+          <p className="text-gray-500 text-sm">描述需求，AI 生成工作流代码</p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={loadExample}
-            className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+            className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
           >
             加载示例
           </button>
           <button
             onClick={handleCreate}
             disabled={loading || !program.trim()}
-            className="px-6 py-2 text-sm bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-medium rounded-lg hover:opacity-90 disabled:opacity-50 transition shadow-lg shadow-violet-500/25"
+            className="px-6 py-2 text-sm bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 transition"
           >
             {loading ? '创建中...' : '▶ 创建执行'}
           </button>
         </div>
       </div>
 
-      {/* Main Content: Split View */}
+      {/* Main Split View */}
       <div 
         ref={containerRef}
-        className="flex h-[calc(100%-80px)] bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
-        style={{ cursor: isDragging ? 'col-resize' : 'default' }}
+        className="flex h-[calc(100%-80px)] rounded-2xl overflow-hidden"
+        style={{ 
+          cursor: isDragging ? 'col-resize' : 'default',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.08)'
+        }}
       >
-        {/* Left: AI Panel */}
+        {/* Left: AI Chat */}
         <div 
-          className="flex flex-col h-full bg-gradient-to-b from-slate-900 to-slate-800"
+          className="flex flex-col h-full bg-gray-50 border-r border-gray-200"
           style={{ width: `${splitRatio}%` }}
         >
-          {/* AI Header */}
-          <div className="px-5 py-4 border-b border-slate-700/50 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg">
-              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          {/* AI Section Header */}
+          <div className="px-5 py-4 bg-white border-b border-gray-200 flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
+              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
             <div>
-              <div className="text-white font-semibold">AI 工作流助手</div>
-              <div className="text-slate-400 text-xs">描述需求，自动生成 .prose 代码</div>
+              <div className="text-sm font-semibold text-gray-900">AI 助手</div>
+              <div className="text-xs text-gray-500">描述需求，自动生成代码</div>
             </div>
           </div>
           
-          {/* AI Assistant */}
-          <div className="flex-1 min-h-0">
+          {/* AI Chat Content */}
+          <div className="flex-1 min-h-0 bg-gray-50">
             <AIAssistant
               onInsert={handleAIInsert}
               onReplace={handleAIReplace}
@@ -219,27 +222,26 @@ export function NewExecution() {
 
         {/* Divider */}
         <div
-          className={`group relative w-1 flex-shrink-0 transition-colors ${
+          className={`group relative w-1 flex-shrink-0 transition-all duration-200 ${
             isDragging ? 'bg-violet-400' : 'bg-gray-200 hover:bg-violet-300'
           }`}
           onMouseDown={handleMouseDown}
         >
-          {/* Drag Handle */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-12 bg-white rounded-lg shadow-md border border-gray-200 flex items-center justify-center transition-all group-hover:shadow-lg group-hover:border-violet-300">
-            <div className="flex flex-col gap-1">
-              <div className="w-1 h-1 bg-gray-400 rounded-full group-hover:bg-violet-500 transition-colors" />
-              <div className="w-1 h-1 bg-gray-400 rounded-full group-hover:bg-violet-500 transition-colors" />
-              <div className="w-1 h-1 bg-gray-400 rounded-full group-hover:bg-violet-500 transition-colors" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-10 bg-white rounded-lg shadow-md border border-gray-200 flex items-center justify-center transition-all group-hover:shadow-lg group-hover:border-violet-300">
+            <div className="flex flex-col gap-0.5">
+              <div className="w-0.5 h-0.5 bg-gray-400 rounded-full" />
+              <div className="w-0.5 h-0.5 bg-gray-400 rounded-full" />
+              <div className="w-0.5 h-0.5 bg-gray-400 rounded-full" />
             </div>
           </div>
         </div>
 
-        {/* Right: Editor Panel */}
+        {/* Right: Editor */}
         <div 
           className="flex flex-col min-w-0 bg-white"
           style={{ width: `${100 - splitRatio}%` }}
         >
-          {/* Editor Header */}
+          {/* Editor Section Header */}
           <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5">
@@ -247,19 +249,19 @@ export function NewExecution() {
                 <div className="w-3 h-3 rounded-full bg-yellow-400" />
                 <div className="w-3 h-3 rounded-full bg-green-400" />
               </div>
-              <span className="text-gray-500 text-sm font-medium">workflow.prose</span>
+              <span className="text-sm text-gray-600 font-medium">workflow.prose</span>
             </div>
             <button
               onClick={clearEditor}
-              className="px-3 py-1.5 text-xs text-gray-400 hover:text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-md transition"
+              className="px-3 py-1 text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition"
             >
               清空
             </button>
           </div>
 
           {/* Editor Content */}
-          <div className="flex-1 min-h-0 p-4">
-            <div className="h-full rounded-xl overflow-hidden ring-1 ring-gray-200">
+          <div className="flex-1 min-h-0 p-4 bg-gray-50">
+            <div className="h-full rounded-xl overflow-hidden ring-1 ring-gray-200 bg-white">
               <WorkflowEditor
                 value={program}
                 onChange={setProgram}
