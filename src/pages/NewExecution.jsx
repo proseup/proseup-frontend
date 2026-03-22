@@ -165,17 +165,17 @@ export function NewExecution() {
           <h1 className="text-2xl font-bold text-gray-900 mb-1">新建执行</h1>
           <p className="text-gray-500 text-sm">描述需求，AI 生成工作流代码</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <button
             onClick={loadExample}
-            className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
+            className="px-4 py-2 text-sm text-violet-600 bg-violet-50 hover:bg-violet-100 rounded-lg transition border border-violet-200"
           >
-            加载示例
+            📄 加载示例
           </button>
           <button
             onClick={handleCreate}
             disabled={loading || !program.trim()}
-            className="px-6 py-2 text-sm bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 transition"
+            className="px-6 py-2 text-sm bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-semibold rounded-lg hover:opacity-90 disabled:opacity-50 transition shadow-lg shadow-violet-500/30"
           >
             {loading ? '创建中...' : '▶ 创建执行'}
           </button>
@@ -188,17 +188,17 @@ export function NewExecution() {
         className="flex h-[calc(100%-80px)] rounded-2xl overflow-hidden"
         style={{ 
           cursor: isDragging ? 'col-resize' : 'default',
-          boxShadow: '0 4px 24px rgba(0,0,0,0.08)'
+          boxShadow: '0 8px 32px rgba(0,0,0,0.12)'
         }}
       >
-        {/* Left: AI Chat */}
+        {/* Left: AI Chat - Subtle */}
         <div 
-          className="flex flex-col h-full bg-gray-50 border-r border-gray-200"
+          className="flex flex-col h-full bg-slate-50 border-r border-slate-200"
           style={{ width: `${splitRatio}%` }}
         >
           {/* AI Section Header */}
-          <div className="px-5 py-4 bg-white border-b border-gray-200 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
+          <div className="px-5 py-4 bg-white border-b border-slate-200 flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-md">
               <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
@@ -210,7 +210,7 @@ export function NewExecution() {
           </div>
           
           {/* AI Chat Content */}
-          <div className="flex-1 min-h-0 bg-gray-50">
+          <div className="flex-1 min-h-0">
             <AIAssistant
               onInsert={handleAIInsert}
               onReplace={handleAIReplace}
@@ -222,46 +222,49 @@ export function NewExecution() {
 
         {/* Divider */}
         <div
-          className={`group relative w-1 flex-shrink-0 transition-all duration-200 ${
-            isDragging ? 'bg-violet-400' : 'bg-gray-200 hover:bg-violet-300'
+          className={`group relative w-1.5 flex-shrink-0 transition-all duration-200 ${
+            isDragging ? 'bg-violet-500' : 'bg-slate-200 hover:bg-violet-400'
           }`}
           onMouseDown={handleMouseDown}
         >
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-10 bg-white rounded-lg shadow-md border border-gray-200 flex items-center justify-center transition-all group-hover:shadow-lg group-hover:border-violet-300">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-12 bg-white rounded-xl shadow-lg border border-slate-200 flex items-center justify-center transition-all group-hover:shadow-xl group-hover:border-violet-300">
             <div className="flex flex-col gap-0.5">
-              <div className="w-0.5 h-0.5 bg-gray-400 rounded-full" />
-              <div className="w-0.5 h-0.5 bg-gray-400 rounded-full" />
-              <div className="w-0.5 h-0.5 bg-gray-400 rounded-full" />
+              <div className="w-1 h-1 bg-slate-400 rounded-full group-hover:bg-violet-500 transition-colors" />
+              <div className="w-1 h-1 bg-slate-400 rounded-full group-hover:bg-violet-500 transition-colors" />
+              <div className="w-1 h-1 bg-slate-400 rounded-full group-hover:bg-violet-500 transition-colors" />
             </div>
           </div>
         </div>
 
-        {/* Right: Editor */}
+        {/* Right: Editor - Bright and Prominent */}
         <div 
-          className="flex flex-col min-w-0 bg-white"
+          className="flex flex-col min-w-0 bg-gradient-to-br from-white to-violet-50"
           style={{ width: `${100 - splitRatio}%` }}
         >
           {/* Editor Section Header */}
-          <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+          <div className="px-5 py-4 bg-white border-b border-violet-100 flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-red-400" />
-                <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                <div className="w-3 h-3 rounded-full bg-green-400" />
+                <div className="w-3.5 h-3.5 rounded-full bg-red-400 shadow-sm" />
+                <div className="w-3.5 h-3.5 rounded-full bg-yellow-400 shadow-sm" />
+                <div className="w-3.5 h-3.5 rounded-full bg-green-400 shadow-sm" />
               </div>
-              <span className="text-sm text-gray-600 font-medium">workflow.prose</span>
+              <span className="text-sm text-gray-700 font-semibold">workflow.prose</span>
             </div>
-            <button
-              onClick={clearEditor}
-              className="px-3 py-1 text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition"
-            >
-              清空
-            </button>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-violet-500 bg-violet-50 px-2 py-1 rounded-md border border-violet-200">Prose</span>
+              <button
+                onClick={clearEditor}
+                className="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition"
+              >
+                清空
+              </button>
+            </div>
           </div>
 
-          {/* Editor Content */}
-          <div className="flex-1 min-h-0 p-4 bg-gray-50">
-            <div className="h-full rounded-xl overflow-hidden ring-1 ring-gray-200 bg-white">
+          {/* Editor Content - Bright */}
+          <div className="flex-1 min-h-0 p-5 bg-gradient-to-br from-violet-25/50 to-white">
+            <div className="h-full rounded-xl overflow-hidden shadow-lg ring-1 ring-violet-200/50 bg-white border border-violet-100">
               <WorkflowEditor
                 value={program}
                 onChange={setProgram}

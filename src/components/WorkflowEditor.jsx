@@ -1,14 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ProseEditor } from './ProseEditor';
-import { SimpleCanvas } from './SimpleCanvas';
+import { NodeEditor } from './NodeEditor';
 import { proseToComfyUI, comfyUIToProse } from '../utils/workflowConverter';
-
-/**
- * @typedef {Object} WorkflowEditorProps
- * @property {string} value - The .prose text content
- * @property {(value: string) => void} onChange - Callback when text changes
- * @property {string} [placeholder]
- */
 
 export function WorkflowEditor({ value, onChange, placeholder }) {
   const [mode, setMode] = useState('text'); // 'text' | 'canvas'
@@ -22,7 +15,6 @@ export function WorkflowEditor({ value, onChange, placeholder }) {
       setWorkflow(newWorkflow);
       setLastSyncedProse(value);
     } else if (mode === 'canvas' && workflow.nodes.length === 0) {
-      // First time entering canvas mode
       const newWorkflow = proseToComfyUI(value);
       setWorkflow(newWorkflow);
     }
@@ -37,7 +29,6 @@ export function WorkflowEditor({ value, onChange, placeholder }) {
   // Handle canvas workflow changes
   const handleWorkflowChange = useCallback((newWorkflow) => {
     setWorkflow(newWorkflow);
-    // Convert back to prose
     const newProse = comfyUIToProse(newWorkflow);
     if (newProse) {
       setLastSyncedProse(newProse);
@@ -96,7 +87,7 @@ export function WorkflowEditor({ value, onChange, placeholder }) {
           {mode === 'text' ? (
             '使用 .prose 语法编辑工作流'
           ) : (
-            '可视化流程图 · 双击编辑节点名称'
+            '可视化流程图 · 双击节点编辑属性'
           )}
         </div>
       </div>
@@ -113,7 +104,7 @@ export function WorkflowEditor({ value, onChange, placeholder }) {
           </div>
         ) : (
           <div className="h-full p-4">
-            <SimpleCanvas
+            <NodeEditor
               workflow={workflow}
               onChange={handleWorkflowChange}
             />

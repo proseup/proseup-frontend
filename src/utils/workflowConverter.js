@@ -1,226 +1,249 @@
 /**
- * Workflow format converter - Simplified version
- * 每个步骤一个框，直观简洁
+ * Workflow converter - NodeEditor format
  */
-
-/**
- * @typedef {Object} Node
- * @property {string} id
- * @property {string} type - 'step'
- * @property {string} label
- * @property {string} [description]
- * @property {[number, number]} pos
- */
-
-/**
- * @typedef {Object} Edge
- * @property {string} from
- * @property {string} to
- */
-
-const NODE_WIDTH = 280
-const NODE_HEIGHT = 60
-const X_START = 60
-const Y_START = 40
-const X_GAP = 40
-const Y_GAP = 80
 
 let nodeIdCounter = 1
-const genId = () => `node_${nodeIdCounter++}`
+const genId = () => 'node_' + (nodeIdCounter++)
 
 /**
- * Parse .prose text to simple steps
+ * Parse .prose text to workflow nodes
  */
-export function parseProseToSteps(prose) {
-  const steps = []
-  const lines = prose.split('\n')
-  let currentStep = null
-  
-  for (const line of lines) {
-    const trimmed = line.trim()
-    
-    // Skip empty lines and comments
-    if (!trimmed || trimmed.startsWith('#')) {
-      if (currentStep) {
-        currentStep.description = currentStep.description?.trim()
-        steps.push(currentStep)
-        currentStep = null
-      }
-      continue
-    }
-    
-    // Detect step types
-    let type = 'step'
-    let label = trimmed
-    
-    if (trimmed.startsWith('session') || trimmed.startsWith('"')) {
-      type = 'step'
-      // Extract session name
-      const match = trimmed.match(/session\s*(?::\s*(\w+))?(?:\s+"(.*)")?/)
-      if (match) {
-        label = match[2] || match[1] || trimmed
-      } else {
-        label = trimmed.replace(/^session\s*/, '').replace(/"/g, '') || '执行'
-      }
-    } else if (trimmed.startsWith('agent ')) {
-      type = 'agent'
-      const match = trimmed.match(/agent\s+(\w+)/)
-      label = match ? `🤖 ${match[1]}` : trimmed
-    } else if (trimmed.startsWith('parallel')) {
-      type = 'parallel'
-      label = '⚡ 并行执行'
-    } else if (trimmed.startsWith('repeat') || trimmed.startsWith('for') || trimmed.startsWith('loop')) {
-      type = 'loop'
-      label = '🔄 循环执行'
-    } else if (trimmed.startsWith('if') || trimmed.startsWith('choice')) {
-      type = 'condition'
-      label = '❓ 条件判断'
-    } else if (trimmed.startsWith('try')) {
-      type = 'try'
-      label = '🛡️ 尝试执行'
-    } else if (trimmed.startsWith('catch')) {
-      type = 'catch'
-      label = '⚠️ 错误处理'
-    } else if (trimmed.startsWith('input ')) {
-      type = 'input'
-      const match = trimmed.match(/input\s+(\w+):/)
-      label = match ? `📥 ${match[1]}` : '📥 输入'
-    } else if (trimmed.startsWith('output ')) {
-      type = 'output'
-      const match = trimmed.match(/output\s+(\w+)/)
-      label = match ? `📤 ${match[1]}` : '📤 输出'
-    }
-    
-    // Check if this is a new step (not indented continuation)
-    const isNewStep = !line.startsWith('  ') && !line.startsWith('\t')
-    
-    if (isNewStep && trimmed.endsWith(':')) {
-      // Block definition - skip
-      continue
-    }
-    
-    if (isNewStep) {
-      if (currentStep) {
-        currentStep.description = currentStep.description?.trim()
-        steps.push(currentStep)
-      }
-      currentStep = { type, label, description: '' }
-    } else if (currentStep) {
-      // Continuation line
-      currentStep.description += ' ' + trimmed
-    }
-  }
-  
-  if (currentStep) {
-    currentStep.description = currentStep.description?.trim()
-    steps.push(currentStep)
-  }
-  
-  return steps
-}
-
-/**
- * Convert prose to simple workflow
- */
-export function proseToSimpleWorkflow(prose) {
-  nodeIdCounter = 1
-  const steps = parseProseToSteps(prose)
-  
+export function parseProseToNodes(prose) {
   const nodes = []
+  const lines = prose.split('\n')
+  let y = 60
+  let prevNodeId = null
   const edges = []
-  
-  // Create start node
+
+  // Add start node
   const startId = genId()
   nodes.push({
     id: startId,
     type: 'start',
-    label: '开始',
-    pos: [X_START, Y_START]
+    pos: [100, 60],
+    properties: { name: '开始' }
   })
-  
-  // Create step nodes
-  let prevId = startId
-  steps.forEach((step, index) => {
-    const id = genId()
-    nodes.push({
-      id,
-      type: step.type,
-      label: step.label,
-      description: step.description,
-      pos: [X_START, Y_START + (index + 1) * (NODE_HEIGHT + Y_GAP)]
-    })
-    edges.push({ from: prevId, to: id })
-    prevId = id
-  })
-  
-  // Create end node
+  prevNodeId = startId
+
+  for (const line of lines) {
+    const trimmed = line.trim()
+    if (!trimmed || trimmed.startsWith('#')) continue
+
+    // Input
+    if (trimmed.startsWith('input ')) {
+      const match = trimmed.match(/input\s+(\w+):\s*"(.*)"/)
+      if (match) {
+        const id = genId()
+        nodes.push({
+          id,
+          type: 'input',
+          pos: [100, y],
+          properties: { name: match[1], description: match[2] }
+        })
+        edges.push({ from: prevNodeId, to: id })
+        prevNodeId = id
+        y += 160
+      }
+    }
+    // Agent
+    else if (trimmed.startsWith('agent ')) {
+      const match = trimmed.match(/agent\s+(\w+):/)
+      if (match) {
+        const id = genId()
+        nodes.push({
+          id,
+          type: 'agent',
+          pos: [100, y],
+          properties: { name: match[1], model: 'glm-4-flash', prompt: '' }
+        })
+        edges.push({ from: prevNodeId, to: id })
+        prevNodeId = id
+        y += 160
+      }
+    }
+    // Session
+    else if (trimmed.startsWith('session')) {
+      const match = trimmed.match(/session\s*(?::\s*(\w+))?(?:\s+"(.*)")?/)
+      if (match) {
+        const id = genId()
+        nodes.push({
+          id,
+          type: 'session',
+          pos: [100, y],
+          properties: { 
+            name: match[2] || (match[1] ? `调用 ${match[1]}` : '执行步骤'),
+            agent: match[1] || ''
+          }
+        })
+        edges.push({ from: prevNodeId, to: id })
+        prevNodeId = id
+        y += 160
+      }
+    }
+    // Parallel
+    else if (trimmed === 'parallel:') {
+      const id = genId()
+      nodes.push({
+        id,
+        type: 'parallel',
+        pos: [100, y],
+        properties: { name: '并行执行', branches: 2 }
+      })
+      edges.push({ from: prevNodeId, to: id })
+      prevNodeId = id
+      y += 160
+    }
+    // Repeat/Loop
+    else if (trimmed.startsWith('repeat ') || trimmed.startsWith('for ') || trimmed.startsWith('loop ')) {
+      const match = trimmed.match(/(repeat|for|loop)\s*(.*)/)
+      if (match) {
+        const id = genId()
+        const type = match[1] === 'repeat' ? 'repeat' : match[1] === 'for' ? 'for' : 'while'
+        nodes.push({
+          id,
+          type: 'loop',
+          pos: [100, y],
+          properties: { name: `${type} 循环`, type, count: match[2] || '3' }
+        })
+        edges.push({ from: prevNodeId, to: id })
+        prevNodeId = id
+        y += 160
+      }
+    }
+    // If
+    else if (trimmed.startsWith('if ')) {
+      const match = trimmed.match(/if\s+\*\*(\w+)\*\*/)
+      if (match) {
+        const id = genId()
+        nodes.push({
+          id,
+          type: 'if',
+          pos: [100, y],
+          properties: { name: '条件判断', condition: match[1] }
+        })
+        edges.push({ from: prevNodeId, to: id })
+        prevNodeId = id
+        y += 160
+      }
+    }
+    // Try
+    else if (trimmed === 'try:') {
+      const id = genId()
+      nodes.push({
+        id,
+        type: 'try',
+        pos: [100, y],
+        properties: { name: '尝试执行' }
+      })
+      edges.push({ from: prevNodeId, to: id })
+      prevNodeId = id
+      y += 160
+    }
+    // Output
+    else if (trimmed.startsWith('output ')) {
+      const match = trimmed.match(/output\s+(\w+)\s*=/)
+      if (match) {
+        const id = genId()
+        nodes.push({
+          id,
+          type: 'output',
+          pos: [100, y],
+          properties: { name: match[1], value: '' }
+        })
+        edges.push({ from: prevNodeId, to: id })
+        prevNodeId = id
+        y += 160
+      }
+    }
+  }
+
+  // Add end node
   const endId = genId()
   nodes.push({
     id: endId,
     type: 'end',
-    label: '结束',
-    pos: [X_START, Y_START + (steps.length + 1) * (NODE_HEIGHT + Y_GAP)]
+    pos: [100, y],
+    properties: { name: '结束' }
   })
-  edges.push({ from: prevId, to: endId })
-  
+  edges.push({ from: prevNodeId, to: endId })
+
   return { nodes, edges }
 }
 
 /**
- * Convert simple workflow back to prose text
+ * Convert nodes back to prose
  */
-export function simpleWorkflowToProse(workflow) {
-  const { nodes, edges } = workflow
+export function nodesToProse(nodes, edges) {
   const lines = []
   
   // Sort nodes by Y position
-  const sortedNodes = [...nodes].sort((a, b) => a.pos[1] - b.pos[1])
+  const sorted = [...nodes].sort((a, b) => a.pos[1] - b.pos[1])
   
-  for (const node of sortedNodes) {
-    if (node.type === 'start' || node.type === 'end') {
-      continue
-    }
+  for (const node of sorted) {
+    const p = node.properties || {}
     
-    if (node.type === 'input') {
-      const inputName = node.label.replace('📥 ', '')
-      lines.push('input ' + inputName + ': "' + (node.description || '') + '"')
-    } else if (node.type === 'output') {
-      const outputName = node.label.replace('📤 ', '')
-      lines.push('output ' + outputName + ' = session "' + (node.description || '') + '"')
-    } else if (node.type === 'agent') {
-      const agentName = node.label.replace('🤖 ', '')
-      lines.push('agent ' + agentName + ':')
-      lines.push('  prompt: "' + (node.description || '') + '"')
-    } else if (node.type === 'step') {
-      lines.push(`session "${node.label}"`)
-    } else if (node.type === 'parallel') {
-      lines.push('parallel:')
-      lines.push('  session "并行任务 A"')
-      lines.push('  session "并行任务 B"')
-    } else if (node.type === 'loop') {
-      lines.push('repeat 3:')
-      lines.push('  session "循环任务"')
-    } else if (node.type === 'condition') {
-      lines.push('if **condition**:')
-      lines.push('  session "条件为真"')
-      lines.push('else:')
-      lines.push('  session "条件为假"')
-    } else if (node.type === 'try') {
-      lines.push('try:')
-      lines.push('  session "尝试执行"')
-      lines.push('catch as err:')
-      lines.push('  session "处理错误"')
+    switch (node.type) {
+      case 'start':
+      case 'end':
+        break // No prose syntax needed
+      case 'input':
+        lines.push(`input ${p.name || 'topic'}: "${p.description || ''}"`)
+        break
+      case 'agent':
+        lines.push(`agent ${p.name || 'agent'}:`)
+        if (p.model) lines.push(`  model: ${p.model}`)
+        if (p.prompt) lines.push(`  prompt: "${p.prompt}"`)
+        break
+      case 'session':
+        if (p.agent) {
+          lines.push(`session: ${p.agent}`)
+        } else {
+          lines.push(`session "${p.name || '步骤'}"`)
+        }
+        break
+      case 'parallel':
+        lines.push('parallel:')
+        lines.push('  a = session "分支 A"')
+        lines.push('  b = session "分支 B"')
+        break
+      case 'loop':
+        if (p.type === 'repeat') {
+          lines.push(`repeat ${p.count || 3}:`)
+          lines.push('  session "循环任务"')
+        } else if (p.type === 'for') {
+          lines.push(`for item in items:`)
+          lines.push('  session "遍历任务"')
+        } else {
+          lines.push(`loop until **${p.condition || 'done'}**:`)
+          lines.push('  session "循环检查"')
+        }
+        break
+      case 'if':
+        lines.push(`if **${p.condition || 'condition'}**:`)
+        lines.push('  session "为真"')
+        lines.push('else:')
+        lines.push('  session "为假"')
+        break
+      case 'try':
+        lines.push('try:')
+        lines.push('  session "尝试执行"')
+        lines.push('catch as err:')
+        lines.push('  session "处理错误"')
+        break
+      case 'output':
+        lines.push(`output ${p.name || 'result'} = session "输出"`)
+        break
     }
   }
   
   return lines.join('\n')
 }
 
-// Export for compatibility
-export const proseToComfyUI = proseToSimpleWorkflow
-export const comfyUIToProse = simpleWorkflowToProse
-export const parseProse = parseProseToSteps
-export const autoLayout = () => {} // No-op for simple workflow
+// Aliases for compatibility
+export const proseToComfyUI = parseProseToNodes
+export const comfyUIToProse = nodesToProse
+export const parseProse = parseProseToNodes
+export const autoLayout = () => {}
 
 export const NODE_TYPES = {
   start: { bg: '#22c55e', color: 'white', label: '开始' },

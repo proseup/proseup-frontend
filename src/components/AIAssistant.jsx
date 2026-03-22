@@ -161,7 +161,7 @@ export function AIAssistant({ onInsert, onReplace, onAppend, currentCode }) {
   }
 
   return (
-    <div className="flex flex-col h-full bg-gray-50">
+    <div className="flex flex-col h-full bg-slate-50">
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-5 space-y-4">
         {messages.map((msg, i) => (
