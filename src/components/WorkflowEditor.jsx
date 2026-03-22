@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ProseEditor } from './ProseEditor';
-import { CanvasEditor } from './CanvasEditor';
+import { SimpleCanvas } from './SimpleCanvas';
 import { proseToComfyUI, comfyUIToProse } from '../utils/workflowConverter';
 
 /**
@@ -14,25 +14,19 @@ export function WorkflowEditor({ value, onChange, placeholder }) {
   const [mode, setMode] = useState('text'); // 'text' | 'canvas'
   const [workflow, setWorkflow] = useState({ nodes: [], edges: [] });
   const [lastSyncedProse, setLastSyncedProse] = useState(value);
-  const [lastSyncedWorkflow, setLastSyncedWorkflow] = useState(null);
 
   // Parse prose to workflow when switching to canvas mode
   useEffect(() => {
-    if (mode === 'canvas') {
-      // Only re-parse if prose has changed since last sync
-      if (value !== lastSyncedProse) {
-        const newWorkflow = proseToComfyUI(value);
-        setWorkflow(newWorkflow);
-        setLastSyncedProse(value);
-        setLastSyncedWorkflow(JSON.stringify(newWorkflow));
-      } else if (!lastSyncedWorkflow) {
-        // First time entering canvas mode
-        const newWorkflow = proseToComfyUI(value);
-        setWorkflow(newWorkflow);
-        setLastSyncedWorkflow(JSON.stringify(newWorkflow));
-      }
+    if (mode === 'canvas' && value !== lastSyncedProse) {
+      const newWorkflow = proseToComfyUI(value);
+      setWorkflow(newWorkflow);
+      setLastSyncedProse(value);
+    } else if (mode === 'canvas' && workflow.nodes.length === 0) {
+      // First time entering canvas mode
+      const newWorkflow = proseToComfyUI(value);
+      setWorkflow(newWorkflow);
     }
-  }, [mode, value, lastSyncedProse, lastSyncedWorkflow]);
+  }, [mode, value, lastSyncedProse]);
 
   // Handle prose text changes
   const handleProseChange = useCallback((newProse) => {
@@ -43,23 +37,23 @@ export function WorkflowEditor({ value, onChange, placeholder }) {
   // Handle canvas workflow changes
   const handleWorkflowChange = useCallback((newWorkflow) => {
     setWorkflow(newWorkflow);
-    setLastSyncedWorkflow(JSON.stringify(newWorkflow));
-  }, []);
+    // Convert back to prose
+    const newProse = comfyUIToProse(newWorkflow);
+    if (newProse) {
+      setLastSyncedProse(newProse);
+      onChange(newProse);
+    }
+  }, [onChange]);
 
   // Convert workflow back to prose when switching to text mode
   const handleSwitchToText = useCallback(() => {
-    // Save current canvas state
-    const currentWorkflowJson = JSON.stringify(workflow);
-    if (currentWorkflowJson !== lastSyncedWorkflow) {
-      const newProse = comfyUIToProse(workflow);
+    const newProse = comfyUIToProse(workflow);
+    if (newProse && newProse !== value) {
       setLastSyncedProse(newProse);
       onChange(newProse);
     }
     setMode('text');
-  }, [workflow, lastSyncedWorkflow, onChange]);
-
-  // Prepare workflow for canvas (ensure it has proper structure)
-  const canvasWorkflow = mode === 'canvas' ? workflow : { nodes: [], edges: [] };
+  }, [workflow, value, onChange]);
 
   return (
     <div className="flex flex-col h-full">
@@ -102,7 +96,7 @@ export function WorkflowEditor({ value, onChange, placeholder }) {
           {mode === 'text' ? (
             '使用 .prose 语法编辑工作流'
           ) : (
-            '拖拽节点编辑工作流，双击节点修改属性'
+            '可视化流程图 · 双击编辑节点名称'
           )}
         </div>
       </div>
@@ -119,25 +113,13 @@ export function WorkflowEditor({ value, onChange, placeholder }) {
           </div>
         ) : (
           <div className="h-full p-4">
-            <CanvasEditor
-              workflow={canvasWorkflow}
+            <SimpleCanvas
+              workflow={workflow}
               onChange={handleWorkflowChange}
             />
           </div>
         )}
       </div>
-
-      {/* Sync indicator */}
-      {mode === 'canvas' && value !== lastSyncedProse && (
-        <div className="px-4 py-2 bg-amber-500/10 border-t border-amber-500/20">
-          <div className="flex items-center gap-2 text-xs text-amber-400">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-            画布内容与文本不同步，切换到文本模式将应用画布更改
-          </div>
-        </div>
-      )}
     </div>
   );
 }
