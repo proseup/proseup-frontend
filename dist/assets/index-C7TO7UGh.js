@@ -163,36 +163,46 @@ Please change the parent <Route path="${O}"> to <Route path="${O==="/"?"*":`${O}
 - 点击「替换」替换全部内容
 - 或继续修改需求`}])):f(oe=>[...oe,{role:"assistant",content:ne}])}else throw new Error("Invalid response")}catch(Y){console.error("AI Error:",Y),f(q=>[...q,{role:"assistant",content:`抱歉，AI 服务暂时不可用。请稍后重试。
 
-或者你也可以手动编写 .prose 代码。`}])}finally{x(!1)}},O=()=>{j&&o&&o(j),C(!1),R(null)},V=()=>{j&&u&&u(j),C(!1),R(null)},G=()=>{C(!1),R(null)};return i.jsxs("div",{className:"flex flex-col h-full bg-slate-900 rounded-lg border border-slate-700",children:[i.jsx("div",{className:"px-4 py-3 border-b border-slate-700 flex items-center justify-between",children:i.jsxs("div",{className:"flex items-center gap-2",children:[i.jsx("div",{className:"w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center",children:i.jsx("svg",{className:"w-4 h-4 text-white",fill:"none",viewBox:"0 0 24 24",stroke:"currentColor",children:i.jsx("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M13 10V3L4 14h7v7l9-11h-7z"})})}),i.jsxs("div",{children:[i.jsx("div",{className:"text-sm font-medium text-white",children:"AI 助手"}),i.jsx("div",{className:"text-xs text-slate-400",children:"生成 .prose 工作流"})]})]})}),i.jsxs("div",{className:"flex-1 overflow-y-auto p-4 space-y-4",children:[d.map((Z,Y)=>i.jsx("div",{className:`flex ${Z.role==="user"?"justify-end":"justify-start"}`,children:i.jsx("div",{className:`max-w-[85%] rounded-2xl px-4 py-3 ${Z.role==="user"?"bg-violet-600 text-white rounded-br-md":"bg-slate-800 text-slate-200 rounded-bl-md"}`,children:i.jsx("div",{className:"text-sm whitespace-pre-wrap",children:Z.content})})},Y)),k&&i.jsx("div",{className:"flex justify-start",children:i.jsx("div",{className:"bg-slate-800 text-slate-400 rounded-2xl rounded-bl-md px-4 py-3",children:i.jsxs("div",{className:"flex items-center gap-2",children:[i.jsxs("div",{className:"flex gap-1",children:[i.jsx("span",{className:"w-2 h-2 bg-slate-400 rounded-full animate-bounce",style:{animationDelay:"0ms"}}),i.jsx("span",{className:"w-2 h-2 bg-slate-400 rounded-full animate-bounce",style:{animationDelay:"150ms"}}),i.jsx("span",{className:"w-2 h-2 bg-slate-400 rounded-full animate-bounce",style:{animationDelay:"300ms"}})]}),i.jsx("span",{className:"text-xs",children:"AI 思考中..."})]})})}),w&&j&&i.jsx("div",{className:"flex justify-start",children:i.jsxs("div",{className:"bg-slate-800 rounded-2xl rounded-bl-md px-4 py-3 max-w-[85%]",children:[i.jsx("div",{className:"text-sm text-slate-300 mb-3",children:"生成的代码："}),i.jsx("pre",{className:"text-xs bg-slate-900 rounded-lg p-3 overflow-x-auto max-h-48 overflow-y-auto mb-3 text-slate-300",children:j}),i.jsxs("div",{className:"flex gap-2",children:[i.jsx("button",{onClick:O,className:"flex-1 px-3 py-2 bg-violet-600 hover:bg-violet-500 text-white text-xs font-medium rounded-lg transition",children:"插入到光标位置"}),i.jsx("button",{onClick:V,className:"flex-1 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-medium rounded-lg transition",children:"替换全部"}),i.jsx("button",{onClick:G,className:"px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs font-medium rounded-lg transition",children:"取消"})]})]})}),i.jsx("div",{ref:F})]}),i.jsxs("div",{className:"p-4 border-t border-slate-700",children:[i.jsxs("div",{className:"flex gap-2",children:[i.jsx("input",{ref:$,type:"text",value:p,onChange:Z=>m(Z.target.value),onKeyDown:Z=>Z.key==="Enter"&&!Z.shiftKey&&z(),placeholder:"描述你想要的工作流...",className:"flex-1 px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-sm placeholder-slate-500 focus:outline-none focus:border-violet-500 transition"}),i.jsx("button",{onClick:z,disabled:!p.trim()||k,className:"px-4 py-2.5 bg-violet-600 hover:bg-violet-500 disabled:bg-slate-700 disabled:text-slate-500 text-white text-sm font-medium rounded-xl transition",children:i.jsx("svg",{className:"w-5 h-5",fill:"none",viewBox:"0 0 24 24",stroke:"currentColor",children:i.jsx("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M12 19l9 2-9-18-9 18 9-2zm0 0v-8"})})})]}),i.jsx("div",{className:"mt-2 text-xs text-slate-500",children:"按 Enter 发送，Shift+Enter 换行"})]})]})}const Tm="https://api.proseup.cn",Hc=`# AI 研究助手工作流
+或者你也可以手动编写 .prose 代码。`}])}finally{x(!1)}},O=()=>{j&&o&&o(j),C(!1),R(null)},V=()=>{j&&u&&u(j),C(!1),R(null)},G=()=>{C(!1),R(null)};return i.jsxs("div",{className:"flex flex-col h-full bg-slate-900 rounded-lg border border-slate-700",children:[i.jsx("div",{className:"px-4 py-3 border-b border-slate-700 flex items-center justify-between",children:i.jsxs("div",{className:"flex items-center gap-2",children:[i.jsx("div",{className:"w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center",children:i.jsx("svg",{className:"w-4 h-4 text-white",fill:"none",viewBox:"0 0 24 24",stroke:"currentColor",children:i.jsx("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M13 10V3L4 14h7v7l9-11h-7z"})})}),i.jsxs("div",{children:[i.jsx("div",{className:"text-sm font-medium text-white",children:"AI 助手"}),i.jsx("div",{className:"text-xs text-slate-400",children:"生成 .prose 工作流"})]})]})}),i.jsxs("div",{className:"flex-1 overflow-y-auto p-4 space-y-4",children:[d.map((Z,Y)=>i.jsx("div",{className:`flex ${Z.role==="user"?"justify-end":"justify-start"}`,children:i.jsx("div",{className:`max-w-[85%] rounded-2xl px-4 py-3 ${Z.role==="user"?"bg-violet-600 text-white rounded-br-md":"bg-slate-800 text-slate-200 rounded-bl-md"}`,children:i.jsx("div",{className:"text-sm whitespace-pre-wrap",children:Z.content})})},Y)),k&&i.jsx("div",{className:"flex justify-start",children:i.jsx("div",{className:"bg-slate-800 text-slate-400 rounded-2xl rounded-bl-md px-4 py-3",children:i.jsxs("div",{className:"flex items-center gap-2",children:[i.jsxs("div",{className:"flex gap-1",children:[i.jsx("span",{className:"w-2 h-2 bg-slate-400 rounded-full animate-bounce",style:{animationDelay:"0ms"}}),i.jsx("span",{className:"w-2 h-2 bg-slate-400 rounded-full animate-bounce",style:{animationDelay:"150ms"}}),i.jsx("span",{className:"w-2 h-2 bg-slate-400 rounded-full animate-bounce",style:{animationDelay:"300ms"}})]}),i.jsx("span",{className:"text-xs",children:"AI 思考中..."})]})})}),w&&j&&i.jsx("div",{className:"flex justify-start",children:i.jsxs("div",{className:"bg-slate-800 rounded-2xl rounded-bl-md px-4 py-3 max-w-[85%]",children:[i.jsx("div",{className:"text-sm text-slate-300 mb-3",children:"生成的代码："}),i.jsx("pre",{className:"text-xs bg-slate-900 rounded-lg p-3 overflow-x-auto max-h-48 overflow-y-auto mb-3 text-slate-300",children:j}),i.jsxs("div",{className:"flex gap-2",children:[i.jsx("button",{onClick:O,className:"flex-1 px-3 py-2 bg-violet-600 hover:bg-violet-500 text-white text-xs font-medium rounded-lg transition",children:"插入到光标位置"}),i.jsx("button",{onClick:V,className:"flex-1 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-medium rounded-lg transition",children:"替换全部"}),i.jsx("button",{onClick:G,className:"px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs font-medium rounded-lg transition",children:"取消"})]})]})}),i.jsx("div",{ref:F})]}),i.jsxs("div",{className:"p-4 border-t border-slate-700",children:[i.jsxs("div",{className:"flex gap-2",children:[i.jsx("input",{ref:$,type:"text",value:p,onChange:Z=>m(Z.target.value),onKeyDown:Z=>Z.key==="Enter"&&!Z.shiftKey&&z(),placeholder:"描述你想要的工作流...",className:"flex-1 px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-sm placeholder-slate-500 focus:outline-none focus:border-violet-500 transition"}),i.jsx("button",{onClick:z,disabled:!p.trim()||k,className:"px-4 py-2.5 bg-violet-600 hover:bg-violet-500 disabled:bg-slate-700 disabled:text-slate-500 text-white text-sm font-medium rounded-xl transition",children:i.jsx("svg",{className:"w-5 h-5",fill:"none",viewBox:"0 0 24 24",stroke:"currentColor",children:i.jsx("path",{strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:2,d:"M12 19l9 2-9-18-9 18 9-2zm0 0v-8"})})})]}),i.jsx("div",{className:"mt-2 text-xs text-slate-500",children:"按 Enter 发送，Shift+Enter 换行"})]})]})}const Tm="https://api.proseup.cn",Hc=`# AI 新闻分析助手
+# 功能：自动采集、分析、生成报告
 
-input topic: "要研究的主题"
+input topic: "AI 最新进展"
+input language: "中文"
 
-agent researcher:
-  model: sonnet
-  persist: true
-  prompt: "You are a research expert"
+# 定义 Agent
+agent collector:
+  model: glm-4-flash
+  prompt: "从多个来源收集相关信息"
 
-session: researcher
-  context: topic
+agent analyst:
+  model: glm-4-flash
+  prompt: "分析数据，提取关键信息"
 
+# 第一步：并行采集
 parallel:
-  a = session "收集资料"
-  b = session "分析趋势"
+  news = session "采集最新新闻"
+  trends = session "采集趋势数据"
+  social = session "采集社交媒体"
 
-choice **severity**:
-  option "High":
-    session "深度报告"
-  option "Low":
-    session "简短摘要"
+# 第二步：分析
+session: analyst
+  context: news
 
+# 第三步：条件判断
+if **high_priority**:
+  session "深度分析"
+else:
+  session "快速摘要"
+
+# 错误处理
 try:
-  session "执行研究"
+  session "生成报告"
 catch as err:
-  session "处理错误"
+  session "生成备用报告"
 finally:
-  session "清理资源"
+  session "发送通知"
 
-output findings = session "输出结论"`;function Mm(){const[o,u]=v.useState(Hc),[a,d]=v.useState(""),[f,p]=v.useState(!1),[m,k]=v.useState(null),[x,w]=v.useState(!0),C=ss(),j=async()=>{if(!o.trim()){k("请输入工作流代码");return}p(!0),k(null);try{if(await Fr()){const V=await fetch(`${Tm}/api/executions`,{method:"POST",credentials:"include",headers:{"Content-Type":"application/json"},body:JSON.stringify({program:o,name:a||"新执行任务"})});if(V.ok){const G=await V.json();C(`/console/executions/${G.execution.id}`)}else{const G=`exec_${Date.now()}`;C(`/console/executions/${G}`)}}else{const V=await yi.createExecution({program:o,name:a||"新执行任务"});C(`/console/executions/${V.execution.id}`)}}catch{const V=`exec_${Date.now()}`;C(`/console/executions/${V}`)}},R=()=>{u(Hc)},F=()=>{u("")},$=O=>{const V=document.querySelector("textarea");if(V){const G=V.selectionStart,Z=V.selectionEnd,Y=o.substring(0,G),q=o.substring(Z),ne=Y+(Y&&!Y.endsWith(`
+output report = session "输出结论"`;function Mm(){const[o,u]=v.useState(Hc),[a,d]=v.useState(""),[f,p]=v.useState(!1),[m,k]=v.useState(null),[x,w]=v.useState(!0),C=ss(),j=async()=>{if(!o.trim()){k("请输入工作流代码");return}p(!0),k(null);try{if(await Fr()){const V=await fetch(`${Tm}/api/executions`,{method:"POST",credentials:"include",headers:{"Content-Type":"application/json"},body:JSON.stringify({program:o,name:a||"新执行任务"})});if(V.ok){const G=await V.json();C(`/console/executions/${G.execution.id}`)}else{const G=`exec_${Date.now()}`;C(`/console/executions/${G}`)}}else{const V=await yi.createExecution({program:o,name:a||"新执行任务"});C(`/console/executions/${V.execution.id}`)}}catch{const V=`exec_${Date.now()}`;C(`/console/executions/${V}`)}},R=()=>{u(Hc)},F=()=>{u("")},$=O=>{const V=document.querySelector("textarea");if(V){const G=V.selectionStart,Z=V.selectionEnd,Y=o.substring(0,G),q=o.substring(Z),ne=Y+(Y&&!Y.endsWith(`
 `)?`
 `:"")+O+(q&&!q.startsWith(`
 `)?`

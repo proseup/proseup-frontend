@@ -6,36 +6,46 @@ import { checkApiAvailable, mockApi } from '../mock/api'
 
 const API_BASE = 'https://api.proseup.cn'
 
-const EXAMPLE_PROGRAM = `# AI 研究助手工作流
+const EXAMPLE_PROGRAM = `# AI 新闻分析助手
+# 功能：自动采集、分析、生成报告
 
-input topic: "要研究的主题"
+input topic: "AI 最新进展"
+input language: "中文"
 
-agent researcher:
-  model: sonnet
-  persist: true
-  prompt: "You are a research expert"
+# 定义 Agent
+agent collector:
+  model: glm-4-flash
+  prompt: "从多个来源收集相关信息"
 
-session: researcher
-  context: topic
+agent analyst:
+  model: glm-4-flash
+  prompt: "分析数据，提取关键信息"
 
+# 第一步：并行采集
 parallel:
-  a = session "收集资料"
-  b = session "分析趋势"
+  news = session "采集最新新闻"
+  trends = session "采集趋势数据"
+  social = session "采集社交媒体"
 
-choice **severity**:
-  option "High":
-    session "深度报告"
-  option "Low":
-    session "简短摘要"
+# 第二步：分析
+session: analyst
+  context: news
 
+# 第三步：条件判断
+if **high_priority**:
+  session "深度分析"
+else:
+  session "快速摘要"
+
+# 错误处理
 try:
-  session "执行研究"
+  session "生成报告"
 catch as err:
-  session "处理错误"
+  session "生成备用报告"
 finally:
-  session "清理资源"
+  session "发送通知"
 
-output findings = session "输出结论"`
+output report = session "输出结论"`
 
 export function NewExecution() {
   const [program, setProgram] = useState(EXAMPLE_PROGRAM)
