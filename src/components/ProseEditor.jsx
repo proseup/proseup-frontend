@@ -162,6 +162,7 @@ function highlightLine(line) {
 
 export function ProseEditor({ value, onChange, placeholder = '输入 .prose 工作流代码...' }) {
   const textareaRef = useRef(null)
+  const highlightRef = useRef(null)
 
   const lines = value.split('\n')
   const lineCount = Math.max(lines.length, 20)
@@ -181,19 +182,34 @@ export function ProseEditor({ value, onChange, placeholder = '输入 .prose 工�
     }
   }, [value, onChange]);
 
+  // Sync scroll between textarea and highlight layer
+  const handleScroll = useCallback((e) => {
+    if (highlightRef.current) {
+      highlightRef.current.scrollTop = e.target.scrollTop;
+      highlightRef.current.scrollLeft = e.target.scrollLeft;
+    }
+  }, []);
+
   return (
     <div className="flex bg-gray-900 rounded-lg overflow-hidden border border-gray-700 h-full">
       {/* Line Numbers */}
-      <div className="py-4 px-3 text-right text-gray-500 text-sm font-mono select-none bg-gray-900/50 border-r border-gray-800 min-w-[3rem]">
+      <div 
+        className="py-4 px-3 text-right text-gray-500 text-sm font-mono select-none bg-gray-900/50 border-r border-gray-800 min-w-[3rem] overflow-hidden"
+        style={{ lineHeight: '1.5rem' }}
+      >
         {Array.from({ length: lineCount }, (_, i) => (
           <div key={i} className="leading-6">{i + 1}</div>
         ))}
       </div>
 
       {/* Editor */}
-      <div className="flex-1 relative">
-        {/* Highlighted background */}
-        <div className="absolute inset-0 py-4 px-4 pointer-events-none overflow-hidden font-mono text-sm">
+      <div className="flex-1 relative overflow-hidden">
+        {/* Highlighted background - synced with textarea scroll */}
+        <div 
+          ref={highlightRef}
+          className="absolute inset-0 py-4 px-4 pointer-events-none overflow-auto font-mono text-sm"
+          style={{ scrollBehavior: 'auto' }}
+        >
           {lines.map((line, i) => (
             <div key={i} className={`leading-6 whitespace-pre-wrap break-all ${getLineClass(line)}`}>
               {highlightLine(line)}
@@ -211,10 +227,10 @@ export function ProseEditor({ value, onChange, placeholder = '输入 .prose 工�
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="relative w-full py-4 px-4 bg-transparent font-mono text-sm leading-6 resize-none outline-none min-h-full text-transparent caret-white"
+          onScroll={handleScroll}
+          className="relative w-full h-full py-4 px-4 bg-transparent font-mono text-sm leading-6 resize-none outline-none text-transparent caret-white overflow-auto"
           spellCheck={false}
           placeholder={placeholder}
-          style={{ minHeight: '400px' }}
         />
       </div>
     </div>
